@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% form_theme form 'bootstrap_4_layout.html.twig' %}
+
+{% block title %}
+    Create Todo
+{% endblock %}
+
+{% block body %}
+    <h1>Create new todo</h1>
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success" role="alert">
+            {{ message }}
+        </div>
+    {% endfor %}
+    {{ form(form) }}
+{% endblock %}
