@@ -26,7 +26,7 @@ class TodoController extends AbstractController
      * @throws OptimisticLockException
      */
     #[Route(
-        '/',
+        '',
         name: 'todo-create',
         methods: [Request::METHOD_GET, Request::METHOD_POST]
     )]
