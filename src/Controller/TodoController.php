@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Form\Type\TodoType;
 use App\Repository\TodoRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
@@ -9,7 +10,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use TodoType;
 
 #[Route('/todos')]
 class TodoController extends AbstractController
