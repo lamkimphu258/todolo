@@ -27,7 +27,7 @@ class TodoController extends AbstractController
      */
     #[Route(
         '',
-        name: 'todo-create',
+        name: 'todo-index',
         methods: [Request::METHOD_GET, Request::METHOD_POST]
     )]
     public function create(Request $request): Response
@@ -39,7 +39,7 @@ class TodoController extends AbstractController
             $this->toDoRepository->save($todo);
             $this->addFlash('success', 'Todo Created');
 
-            return $this->redirectToRoute('todo-create');
+            return $this->redirectToRoute('todo-index');
         }
 
         $todos = $this->toDoRepository->findAll();
