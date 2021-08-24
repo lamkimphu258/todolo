@@ -42,8 +42,11 @@ class TodoController extends AbstractController
             return $this->redirectToRoute('todo-create');
         }
 
+        $todos = $this->toDoRepository->findAll();
+
         return $this->render('todos/create.html.twig', [
             'form' => $form->createView(),
+            'todos' => $todos,
         ]);
     }
 }
