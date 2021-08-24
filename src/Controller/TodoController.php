@@ -49,4 +49,17 @@ class TodoController extends AbstractController
             'todos' => $todos,
         ]);
     }
+
+    #[Route(
+        '/{slug}',
+        name: 'todo-delete',
+        methods: [Request::METHOD_GET]
+    )]
+    public function delete(string $slug) {
+        $todo = $this->toDoRepository->findOneBySlug($slug);
+        $this->toDoRepository->delete($todo);
+
+        $this->addFlash('success', 'Deleted todo successfully');
+        return $this->redirectToRoute('todo-index');
+    }
 }

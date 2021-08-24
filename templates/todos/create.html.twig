@@ -32,7 +32,7 @@
         <thead>
         <tr>
             <th scope="col">Name</th>
-            <th scope="col" colspan="2">Actions</th>
+            <th scope="col">Actions</th>
         </tr>
         </thead>
         <tbody>
@@ -40,7 +40,9 @@
             <tr>
                 <td>{{ todo.name }}</td>
                 <td>
-                    <button type="button" class="btn btn-warning">Delete</button>
+                    <button type="button" class="btn btn-warning">
+                        <a href="{{ path('todo-delete', {'slug': todo.slug}) }}" class="text-decoration-none link-dark">Delete</a>
+                    </button>
                 </td>
             </tr>
         {% endfor %}

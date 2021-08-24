@@ -37,7 +37,7 @@ final class TodoFactory extends ModelFactory
     {
         return [
             // TODO add your default values here (https://github.com/zenstruck/foundry#model-factories)
-            'name' => self::faker()->text(),
+            'name' => self::faker()->text(maxNbChars: 100),
         ];
     }
 

@@ -31,6 +31,17 @@ class TodoRepository extends ServiceEntityRepository
         $this->getEntityManager()->flush();
     }
 
+    public function findOneBySlug(string $slug)
+    {
+        return $this->findOneBy(['slug' => $slug]);
+    }
+
+    public function delete(Todo $todo)
+    {
+        $this->getEntityManager()->remove($todo);
+        $this->getEntityManager()->flush();
+    }
+
     // /**
     //  * @return ToDo[] Returns an array of ToDo objects
     //  */

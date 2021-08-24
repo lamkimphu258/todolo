@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\TodoRepository;
 use Doctrine\ORM\Id\UuidGenerator;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * @ORM\Entity(repositoryClass=TodoRepository::class)
@@ -20,16 +21,22 @@ class Todo
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255, unique=true, nullable=false)
+     * @ORM\Column(type="string", length=100, unique=true, nullable=false)
      */
     private $name;
 
-    public function getId(): ?int
+    /**
+     * @Gedmo\Slug(fields={"name"})
+     * @ORM\Column(length=100, unique=true)
+     */
+    private $slug;
+
+    public function getId(): string
     {
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getName(): string
     {
         return $this->name;
     }
@@ -39,5 +46,10 @@ class Todo
         $this->name = $name;
 
         return $this;
+    }
+
+    public function getSlug(): string
+    {
+        return $this->slug;
     }
 }
