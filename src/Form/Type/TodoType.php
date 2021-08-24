@@ -17,9 +17,12 @@ class TodoType extends AbstractType
     {
         $builder
             ->add('name', TextType::class, [
-                'required' => true
+                'required' => true,
+                'attr' => ['placeholder' => 'Enter your todo here'],
             ])
-            ->add('save', SubmitType::class);
+            ->add('Save', SubmitType::class, [
+                'attr' => ['class' => 'float-end btn-primary']
+            ]);
     }
 
     /**
@@ -28,7 +31,7 @@ class TodoType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => Todo::class,
-        ]);
+                                   'data_class' => Todo::class,
+                               ]);
     }
 }

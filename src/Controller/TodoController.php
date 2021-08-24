@@ -26,7 +26,7 @@ class TodoController extends AbstractController
      * @throws OptimisticLockException
      */
     #[Route(
-        '/',
+        '',
         name: 'todo-create',
         methods: [Request::METHOD_GET, Request::METHOD_POST]
     )]
@@ -42,8 +42,11 @@ class TodoController extends AbstractController
             return $this->redirectToRoute('todo-create');
         }
 
+        $todos = $this->toDoRepository->findAll();
+
         return $this->render('todos/create.html.twig', [
             'form' => $form->createView(),
+            'todos' => $todos,
         ]);
     }
 }

@@ -1,17 +1,38 @@
 {% extends 'base.html.twig' %}
 
-{% form_theme form 'bootstrap_4_layout.html.twig' %}
+{% form_theme form 'bootstrap_5_layout.html.twig' %}
 
 {% block title %}
     Create Todo
 {% endblock %}
 
 {% block body %}
-    <h1>Create new todo</h1>
+    <h1 class="text-center">Create new todo</h1>
     {% for message in app.flashes('success') %}
         <div class="alert alert-success" role="alert">
             {{ message }}
         </div>
     {% endfor %}
     {{ form(form) }}
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col" colspan="2">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for todo in todos %}
+            <tr>
+                <td>{{ todo.name }}</td>
+                <td>
+                    <button type="button" class="btn btn-success">Edit</button>
+                </td>
+                <td>
+                    <button type="button" class="btn btn-warning">Delete</button>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}
