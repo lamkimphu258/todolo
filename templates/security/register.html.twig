@@ -1,0 +1,10 @@
+{% extends 'base.html.twig' %}
+
+{% form_theme form 'bootstrap_5_layout.html.twig' %}
+
+{% block title %}Register{% endblock %}
+
+{% block body %}
+    <h1 class="text-center">Register</h1>
+    {{ form(form) }}
+{% endblock %}

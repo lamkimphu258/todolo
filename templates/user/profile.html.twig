@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}User Profile{% endblock %}
+
+{% block body %}
+    <a href="{{ path('app_user_update', {'id':app.user.id}) }}" class="btn btn-primary mb-3">
+        Update My Profile
+    </a>
+    <div class="d-flex justify-content-between">
+        <img src="https://i.pravatar.cc/600" alt=>
+        <div class="user-information">
+            <h2>Email: {{ app.user.email }}</h2>
+        </div>
+    </div>
+{% endblock %}

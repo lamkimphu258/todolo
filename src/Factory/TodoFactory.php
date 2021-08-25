@@ -4,9 +4,10 @@ namespace App\Factory;
 
 use App\Entity\Todo;
 use App\Repository\TodoRepository;
-use Zenstruck\Foundry\RepositoryProxy;
+use App\Repository\UserRepository;
 use Zenstruck\Foundry\ModelFactory;
 use Zenstruck\Foundry\Proxy;
+use Zenstruck\Foundry\RepositoryProxy;
 
 /**
  * @method static Todo|Proxy createOne(array $attributes = [])
@@ -26,31 +27,34 @@ use Zenstruck\Foundry\Proxy;
  */
 final class TodoFactory extends ModelFactory
 {
-    public function __construct()
+    protected UserRepository $userRepository;
+
+    public function __construct(UserRepository $userRepository)
     {
         parent::__construct();
-
+        $this->userRepository = $userRepository;
         // TODO inject services if required (https://github.com/zenstruck/foundry#factories-as-services)
+    }
+
+    protected static function getClass(): string
+    {
+        return Todo::class;
     }
 
     protected function getDefaults(): array
     {
+        $users = $this->userRepository->findAll();
         return [
             // TODO add your default values here (https://github.com/zenstruck/foundry#model-factories)
             'name' => self::faker()->text(maxNbChars: 100),
+            'author' => self::faker()->randomElement($users),
         ];
     }
 
     protected function initialize(): self
     {
         // see https://github.com/zenstruck/foundry#initialization
-        return $this
-            // ->afterInstantiate(function(Todo $todo) {})
-        ;
-    }
-
-    protected static function getClass(): string
-    {
-        return Todo::class;
+        return $this// ->afterInstantiate(function(Todo $todo) {})
+            ;
     }
 }

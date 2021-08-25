@@ -21,7 +21,7 @@ class Todo
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=100, unique=true, nullable=false)
+     * @ORM\Column(type="string", length=100, nullable=false)
      */
     private $name;
 
@@ -30,6 +30,12 @@ class Todo
      * @ORM\Column(length=100, unique=true)
      */
     private $slug;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="todos")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $author;
 
     public function getId(): string
     {
@@ -51,5 +57,17 @@ class Todo
     public function getSlug(): string
     {
         return $this->slug;
+    }
+
+    public function getAuthor(): User
+    {
+        return $this->author;
+    }
+
+    public function setAuthor(User $author): self
+    {
+        $this->author = $author;
+
+        return $this;
     }
 }

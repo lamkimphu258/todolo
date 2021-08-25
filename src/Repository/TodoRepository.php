@@ -3,10 +3,12 @@
 namespace App\Repository;
 
 use App\Entity\Todo;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @method Todo|null find($id, $lockMode = null, $lockVersion = null)

@@ -2,8 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\Todo;
 use App\Form\Type\TodoType;
 use App\Repository\TodoRepository;
+use App\Repository\UserRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -15,7 +17,8 @@ use Symfony\Component\Routing\Annotation\Route;
 class TodoController extends AbstractController
 {
     public function __construct(
-        protected TodoRepository $toDoRepository
+        protected TodoRepository $toDoRepository,
+        protected UserRepository $userRepository
     ) {
     }
 
@@ -27,24 +30,32 @@ class TodoController extends AbstractController
      */
     #[Route(
         '',
-        name: 'todo-index',
+        name: 'app_todo_index',
         methods: [Request::METHOD_GET, Request::METHOD_POST]
     )]
-    public function create(Request $request): Response
+    public function index(Request $request): Response
     {
         $form = $this->createForm(TodoType::class);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $todo = $form->getData();
+            /** @var Todo $todo */
+            foreach ($this->getUser()->getTodos() as $userTodo) {
+                if ($userTodo->getName() === $todo->getName()) {
+                    $this->addFlash('error', 'You already have this todo');
+                    return $this->redirectToRoute('app_todo_index');
+                }
+            }
+            $todo->setAuthor($this->getUser());
             $this->toDoRepository->save($todo);
             $this->addFlash('success', 'Todo Created');
 
-            return $this->redirectToRoute('todo-index');
+            return $this->redirectToRoute('app_todo_index');
         }
 
-        $todos = $this->toDoRepository->findAll();
+        $todos = $this->userRepository->findAllTodosBelongsTo($this->getUser());
 
-        return $this->render('todos/create.html.twig', [
+        return $this->render('todos/index.html.twig', [
             'form' => $form->createView(),
             'todos' => $todos,
         ]);
@@ -52,14 +63,20 @@ class TodoController extends AbstractController
 
     #[Route(
         '/{slug}',
-        name: 'todo-delete',
+        name: 'app_todo_delete',
         methods: [Request::METHOD_GET]
     )]
-    public function delete(string $slug) {
+    public function delete(string $slug)
+    {
         $todo = $this->toDoRepository->findOneBySlug($slug);
+
+        if ($todo->getAuthor() !== $this->getUser()) {
+            throw $this->createAccessDeniedException('You do not own this todo.');
+        }
+
         $this->toDoRepository->delete($todo);
 
         $this->addFlash('success', 'Deleted todo successfully');
-        return $this->redirectToRoute('todo-index');
+        return $this->redirectToRoute('app_todo_index');
     }
 }
