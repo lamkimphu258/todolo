@@ -6,6 +6,7 @@ use App\Repository\TodoRepository;
 use Doctrine\ORM\Id\UuidGenerator;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass=TodoRepository::class)
@@ -59,12 +60,12 @@ class Todo
         return $this->slug;
     }
 
-    public function getAuthor(): User
+    public function getAuthor(): UserInterface
     {
         return $this->author;
     }
 
-    public function setAuthor(User $author): self
+    public function setAuthor(UserInterface $author): self
     {
         $this->author = $author;
 

@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Todo;
 use App\Form\Type\TodoType;
+use App\Form\Type\TodoUpdateType;
 use App\Repository\TodoRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\OptimisticLockException;
@@ -62,7 +63,7 @@ class TodoController extends AbstractController
     }
 
     #[Route(
-        '/{slug}',
+        '/{slug}/delete',
         name: 'app_todo_delete',
         methods: [Request::METHOD_GET]
     )]
@@ -78,5 +79,29 @@ class TodoController extends AbstractController
 
         $this->addFlash('success', 'Deleted todo successfully');
         return $this->redirectToRoute('app_todo_index');
+    }
+
+    #[Route('/{slug}/update', name: 'app_todo_update')]
+    public function update(Request $request)
+    {
+        $todo = $this->toDoRepository->findOneBySlug($request->get('slug'));
+
+        $form = $this->createForm(
+            TodoUpdateType::class,
+            $todo
+        );
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $todoData = $form->getData();
+            $todo->setName($todoData->getName());
+
+            $this->toDoRepository->save($todo);
+
+            return $this->redirectToRoute('app_todo_index');
+        }
+
+        return $this->render('todos/update.html.twig', [
+            'form' => $form->createView(),
+        ]);
     }
 }
