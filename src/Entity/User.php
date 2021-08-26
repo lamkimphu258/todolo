@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Doctrine\ORM\Id\UuidGenerator;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
@@ -16,8 +17,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     /**
      * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="uuid", unique=true)
+     * @ORM\GeneratedValue(strategy="CUSTOM")
+     * @ORM\CustomIdGenerator(class=UuidGenerator::class)
      */
     private $id;
 
@@ -48,7 +50,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->todos;
     }
 
-    public function getId(): ?int
+    public function getId(): string
     {
         return $this->id;
     }
