@@ -10,7 +10,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-class TodoType extends AbstractType
+class TodoCreateType extends AbstractType
 {
     /**
      * @param FormBuilderInterface $builder
@@ -21,7 +21,9 @@ class TodoType extends AbstractType
         $builder
             ->add('name', TextType::class, [
                 'required' => true,
-                'constraints' => [new NotBlank(message: 'Todo name should not be blank')],
+                'constraints' => [
+                    new NotBlank(message: 'Todo name should not be blank')
+                ],
                 'attr' => ['placeholder' => 'Enter your todo',],
             ])
             ->add('save', SubmitType::class, [

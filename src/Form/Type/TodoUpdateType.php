@@ -19,7 +19,13 @@ class TodoUpdateType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('name', TextType::class)
+            ->add('name', TextType::class, [
+                'required' => true,
+                'constraints' => [
+                    new NotBlank(message: 'Todo name should not be blank')
+                ],
+                'empty_data' => ''
+            ])
             ->add('save', SubmitType::class, [
                 'attr' => ['class' => 'btn-primary']
             ]);
