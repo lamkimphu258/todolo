@@ -3,21 +3,25 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Form\Type\UserType;
+use App\Form\Type\UserCreateType;
 use App\Repository\UserRepository;
 use App\Security\LoginFormAuthenticator;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
-use Symfony\Component\Security\Http\Authentication\AuthenticatorManagerInterface;
 use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
 
 class SecurityController extends AbstractController
 {
-    public function __construct(protected UserRepository $userRepository)
+    public function __construct(
+        protected UserRepository $userRepository
+    )
     {
     }
 
@@ -38,6 +42,9 @@ class SecurityController extends AbstractController
 
     /**
      * @param Request $request
+     * @param UserPasswordHasherInterface $passwordHasher
+     * @param LoginFormAuthenticator $authenticator
+     * @param UserAuthenticatorInterface $userAuthenticator
      * @return Response
      */
     #[Route("/register", name: "app_register")]
@@ -45,26 +52,35 @@ class SecurityController extends AbstractController
         Request $request,
         UserPasswordHasherInterface $passwordHasher,
         LoginFormAuthenticator $authenticator,
-        UserAuthenticatorInterface $userAuthenticator
-    ): Response
-    {
-        $form = $this->createForm(UserType::class);
+        UserAuthenticatorInterface $userAuthenticator,
+        MailerInterface $mailer
+    ): Response {
+        $form = $this->createForm(UserCreateType::class);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var User $userData */
-            $userData = $form->getData();
-            $isExistedUser = $this->userRepository->findByEmail($userData->getEmail());
-            if (!is_null($isExistedUser)){
-                $this->addFlash('error', 'User with this email is already existed');
-                return $this->redirectToRoute('app_register');
+            /** @var User $user */
+            $user = $form->getData();
+
+            $user->setPassword(
+                $passwordHasher->hashPassword(
+                    $user,
+                    $form->get('plainPassword')->getData()
+                )
+            );
+
+            if ($form->get('agreeTerms')->getData()) {
+                $user->agreeTerms();
             }
 
-            $user = new User();
-            $user->setEmail($userData->getEmail());
-            $user->setPassword(
-                $passwordHasher->hashPassword($user, $userData->getPassword())
-            );
             $this->userRepository->save($user);
+
+            $email = (new TemplatedEmail())
+            ->from('host@email.com')
+            ->to($user->getEmail())
+            ->subject('Welcome to Todolo')
+            ->htmlTemplate('email/welcome.html.twig');
+
+            $mailer->send($email);
 
             return $userAuthenticator->authenticateUser(
                 $user,

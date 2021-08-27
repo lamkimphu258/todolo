@@ -3,15 +3,18 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Id\UuidGenerator;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Doctrine\ORM\Id\UuidGenerator;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ORM\Table(name="`user`")
+ * @UniqueEntity(fields={"email"}, message="User is already existed")
  */
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -44,6 +47,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\OneToMany (targetEntity="App\Entity\Todo", mappedBy="author")
      */
     private Collection $todos;
+
+    /**
+     * @ORM\Column(type="datetime_immutable")
+     */
+    private $agreeTermsAt;
 
     public function getTodos(): Collection
     {
@@ -137,5 +145,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    public function getAgreeTermsAt(): ?DateTimeImmutable
+    {
+        return $this->agreeTermsAt;
+    }
+
+    public function agreeTerms(): self
+    {
+        $this->agreeTermsAt = new DateTimeImmutable();
+
+        return $this;
     }
 }

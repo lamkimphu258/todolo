@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Todo;
-use App\Form\Type\TodoType;
+use App\Form\Type\TodoCreateType;
 use App\Form\Type\TodoUpdateType;
 use App\Repository\TodoRepository;
 use App\Repository\UserRepository;
@@ -36,7 +36,7 @@ class TodoController extends AbstractController
     )]
     public function index(Request $request): Response
     {
-        $form = $this->createForm(TodoType::class);
+        $form = $this->createForm(TodoCreateType::class);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $todo = $form->getData();
@@ -92,9 +92,6 @@ class TodoController extends AbstractController
         );
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $todoData = $form->getData();
-            $todo->setName($todoData->getName());
-
             $this->toDoRepository->save($todo);
 
             return $this->redirectToRoute('app_todo_index');

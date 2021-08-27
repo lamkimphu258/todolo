@@ -4,14 +4,16 @@ namespace App\Form\Type;
 
 use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\IsTrue;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-class UserType extends AbstractType
+class UserCreateType extends AbstractType
 {
     /**
      * @param FormBuilderInterface $builder
@@ -25,9 +27,15 @@ class UserType extends AbstractType
                 'constraints' => [new NotBlank(message: 'Email is required')],
                 'attr' => ['placeholder' => 'example@email.com',],
             ])
-            ->add('password', PasswordType::class, [
+            ->add('plainPassword', PasswordType::class, [
                 'required' => true,
-                'constraints' => [new NotBlank(message: 'Password is required')]
+                'constraints' => [new NotBlank(message: 'Password is required')],
+                'mapped' => false,
+                'label' => 'Password',
+            ])
+            ->add('agreeTerms', CheckboxType::class, [
+                'constraints' => [new IsTrue(message: 'You must agree term to create new account')],
+                'mapped' => false,
             ])
             ->add('register', SubmitType::class, [
                 'attr' => ['class' => 'btn-primary']
