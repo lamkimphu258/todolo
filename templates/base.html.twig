@@ -4,9 +4,6 @@
     <meta charset="UTF-8">
     <title>{% block title %}{% endblock %} - Todolo</title>
     {% block stylesheets %}
-        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
-              integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm"
-              crossorigin="anonymous">
          {{ encore_entry_link_tags('app') }}
     {% endblock %}
 
@@ -14,7 +11,7 @@
          {{ encore_entry_script_tags('app') }}
     {% endblock %}
 </head>
-<body>
+<body class="bg-white">
 <div class="d-flex flex-column justify-content-between min-vh-100">
     {% include 'partials/navbar.html.twig' %}
     <div class="body container my-3">
