@@ -53,6 +53,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $agreeTermsAt;
 
+    /**
+     * @ORM\Column(type="boolean", options={"default": 0})
+     */
+    private $subscribeToNewsletter = false;
+
     public function getTodos(): Collection
     {
         return $this->todos;
@@ -152,9 +157,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->agreeTermsAt;
     }
 
-    public function agreeTerms(): self
+    public function setAgreeTermsAt(DateTimeImmutable $now): self
     {
-        $this->agreeTermsAt = new DateTimeImmutable();
+        $this->agreeTermsAt = $now;
+
+        return $this;
+    }
+
+    public function getSubscribeToNewsletter(): ?bool
+    {
+        return $this->subscribeToNewsletter;
+    }
+
+    public function setSubscribeToNewsletter(bool $subscribeToNewsletter): self
+    {
+        $this->subscribeToNewsletter = $subscribeToNewsletter;
 
         return $this;
     }

@@ -4,8 +4,7 @@ namespace App\Factory;
 
 use App\Entity\User;
 use App\Repository\UserRepository;
-use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactory;
-use Symfony\Component\Security\Core\Encoder\PasswordHasherEncoder;
+use DateTimeImmutable;
 use Zenstruck\Foundry\ModelFactory;
 use Zenstruck\Foundry\Proxy;
 use Zenstruck\Foundry\RepositoryProxy;
@@ -46,6 +45,8 @@ final class UserFactory extends ModelFactory
             'email' => self::faker()->email(),
             'roles' => [],
             'password' => '$2y$13$TJ0OMNOqnzFoBiLE9w/UauCnmK70G9KYaOKZTqvp5V8Ay0NURg8tC',
+            'agreeTermsAt' => new DateTimeImmutable(),
+            'subscribeToNewsletter' => self::faker()->randomNumber(1),
         ];
     }
 
