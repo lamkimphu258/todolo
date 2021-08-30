@@ -4,6 +4,7 @@ namespace App\Command;
 
 use App\Entity\User;
 use App\Repository\UserRepository;
+use App\Service\Mailer;
 use Knp\Snappy\Pdf;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -23,10 +24,8 @@ use Twig\Environment;
 class AuthorWeeklyReportSendCommand extends Command
 {
     public function __construct(
-        protected UserRepository $userRepository,
-        protected MailerInterface $mailer,
-        protected Environment $twig,
-        protected Pdf $pdf
+        private UserRepository $userRepository,
+        private Mailer $mailer
     ) {
         parent::__construct(null);
     }
@@ -46,19 +45,10 @@ class AuthorWeeklyReportSendCommand extends Command
             ->findAllSubscribedToNewsletter();
         $io->progressStart(count($subscribers));
 
-        $html = $this->twig->render('email/weekly-report-pdf.html.twig');
-        $pdf = $this->pdf->getOutputFromHtml($html);
-
         /** @var User $subscriber */
         foreach ($subscribers as $subscriber) {
             $io->progressAdvance();
-            $email = (new TemplatedEmail())
-                ->from(new Address('lamkimphu258@gmail.com', 'CEO Todolo'))
-                ->to(new Address($subscriber->getEmail(), 'Subscriber'))
-                ->subject('Your weekly report about our upgrades')
-                ->htmlTemplate('email/weekly-report.html.twig')
-                ->attach($pdf, sprintf('weekly-report-%s.pdf', date('Y-m-d')));
-            $this->mailer->send($email);
+            $this->mailer->sendWeeklyReport($subscriber);
         }
 
         $io->progressFinish();

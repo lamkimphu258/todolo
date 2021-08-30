@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Form\Type\UserCreateType;
 use App\Repository\UserRepository;
 use App\Security\LoginFormAuthenticator;
+use App\Service\Mailer;
 use DateTimeImmutable;
 use LogicException;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
@@ -54,7 +55,7 @@ class SecurityController extends AbstractController
         UserPasswordHasherInterface $passwordHasher,
         LoginFormAuthenticator $authenticator,
         UserAuthenticatorInterface $userAuthenticator,
-        MailerInterface $mailer
+        Mailer $mailer
     ): Response {
         $form = $this->createForm(UserCreateType::class);
         $form->handleRequest($request);
@@ -75,13 +76,7 @@ class SecurityController extends AbstractController
 
             $this->userRepository->save($user);
 
-            $email = (new TemplatedEmail())
-                ->from('host@email.com')
-                ->to($user->getEmail())
-                ->subject('Welcome to Todolo')
-                ->htmlTemplate('email/welcome.html.twig');
-
-            $mailer->send($email);
+            $mailer->sendWelcomeMessage($user);
 
             return $userAuthenticator->authenticateUser(
                 $user,
