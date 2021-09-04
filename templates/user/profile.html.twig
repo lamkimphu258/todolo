@@ -7,7 +7,7 @@
         Update My Profile
     </a>
     <div class="d-flex justify-content-between">
-        <img src="https://i.pravatar.cc/600" alt=>
+        <img src="{{ asset('uploads/avatars/') ~ app.user.avatarFilename }}" class="profile">
         <div class="user-information">
             <h2>Email: {{ app.user.email }}</h2>
         </div>

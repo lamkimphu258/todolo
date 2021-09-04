@@ -58,6 +58,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $subscribeToNewsletter = false;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $avatarFilename;
+
     public function getTodos(): Collection
     {
         return $this->todos;
@@ -172,6 +177,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setSubscribeToNewsletter(bool $subscribeToNewsletter): self
     {
         $this->subscribeToNewsletter = $subscribeToNewsletter;
+
+        return $this;
+    }
+
+    public function getAvatarFilename(): ?string
+    {
+        return $this->avatarFilename;
+    }
+
+    public function setAvatarFilename(?string $avatarFilename): self
+    {
+        $this->avatarFilename = $avatarFilename;
 
         return $this;
     }

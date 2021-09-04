@@ -9,16 +9,13 @@ use App\Security\LoginFormAuthenticator;
 use App\Service\Mailer;
 use DateTimeImmutable;
 use LogicException;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
-use Symfony\Component\Validator\Constraints\Date;
 
 class SecurityController extends AbstractController
 {
@@ -69,6 +66,7 @@ class SecurityController extends AbstractController
                     $form->get('plainPassword')->getData()
                 )
             );
+            $user->setAvatarFilename('avatar-placeholder.png');
 
             if ($form->get('agreeTerms')->getData()) {
                 $user->setAgreeTermsAt(new DateTimeImmutable());
