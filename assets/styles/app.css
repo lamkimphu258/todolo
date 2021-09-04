@@ -1,12 +1,8 @@
-@import 'bootstrap.css';
-
-body {
-    background-color: #f2f2f2;
-}
+@import 'app_bootstrap.css';
 
 .navbar-nav .nav-item .nav-link img {
-    width: 50px;
-    height: 50px;
+    width: 25px;
+    height: 25px;
 }
 
 .profile {

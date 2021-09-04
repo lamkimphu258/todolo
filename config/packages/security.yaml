@@ -37,3 +37,4 @@ security:
     access_control:
          - { path: ^/admin, roles: ROLE_ADMIN }
          - { path: ^/todos, roles: ROLE_USER }
+         - { path: ^/reverify/email, roles: ROLE_USER }

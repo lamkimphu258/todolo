@@ -10,17 +10,21 @@ use App\Service\Mailer;
 use DateTimeImmutable;
 use LogicException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
+use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
+use SymfonyCasts\Bundle\VerifyEmail\VerifyEmailHelperInterface;
 
 class SecurityController extends AbstractController
 {
     public function __construct(
-        protected UserRepository $userRepository
+        protected UserRepository $userRepository,
+        protected VerifyEmailHelperInterface $helper
     ) {
     }
 
@@ -74,7 +78,7 @@ class SecurityController extends AbstractController
 
             $this->userRepository->save($user);
 
-            $mailer->sendWelcomeMessage($user);
+            $mailer->sendVerificationEmail($user);
 
             return $userAuthenticator->authenticateUser(
                 $user,
@@ -96,5 +100,40 @@ class SecurityController extends AbstractController
         throw new LogicException(
             'This method can be blank - it will be intercepted by the logout key on your firewall.'
         );
+    }
+
+    /**
+     * @Route("/verify", name="registration_confirmation_route")
+     */
+    public function verifyUserEmail(Request $request): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $user = $this->getUser();
+
+        // Do not get the User's Id or Email Address from the Request object
+        try {
+            $this->helper->validateEmailConfirmation($request->getUri(), $user->getId(), $user->getEmail());
+        } catch (VerifyEmailExceptionInterface $e) {
+            $this->addFlash('verify_email_error', $e->getReason());
+
+            return $this->redirectToRoute('app_register');
+        }
+
+        $newUser = $this->userRepository->findByEmail($user->getEmail());
+        $newUser->setVerifiedAt(new DateTimeImmutable());
+        $this->userRepository->save($newUser);
+
+        $this->addFlash('success', 'Your e-mail address has been verified.');
+
+        return $this->redirectToRoute('app_home');
+    }
+
+    #[Route('reverify/email', name: 'app_resend_verification_email', methods: [Request::METHOD_GET])]
+    public function resendVerificationEmail(Mailer $mailer): RedirectResponse
+    {
+        $currentUser = $this->userRepository->findByEmail($this->getUser()->getUserIdentifier());
+        $mailer->sendVerificationEmail($currentUser);
+
+        return $this->redirectToRoute('app_user_get', ['id' => $currentUser->getId()]);
     }
 }

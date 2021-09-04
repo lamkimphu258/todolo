@@ -37,6 +37,7 @@ class UserCreateType extends AbstractType
                 'constraints' => [new IsTrue(message: 'You must agree term to create new account')],
                 'mapped' => false,
             ])
+            ->add('subscribeToNewsletter', CheckboxType::class)
             ->add('register', SubmitType::class, [
                 'attr' => ['class' => 'btn-primary']
             ]);

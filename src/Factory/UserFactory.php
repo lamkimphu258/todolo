@@ -47,6 +47,7 @@ final class UserFactory extends ModelFactory
             'password' => '$2y$13$TJ0OMNOqnzFoBiLE9w/UauCnmK70G9KYaOKZTqvp5V8Ay0NURg8tC',
             'agreeTermsAt' => new DateTimeImmutable(),
             'subscribeToNewsletter' => self::faker()->randomNumber(1),
+            'verifiedAt' => new DateTimeImmutable(),
         ];
     }
 

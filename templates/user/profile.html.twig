@@ -3,11 +3,21 @@
 {% block title %}User Profile{% endblock %}
 
 {% block body %}
-    <a href="{{ path('app_user_update', {'id':app.user.id}) }}" class="btn btn-primary mb-3">
-        Update My Profile
-    </a>
-    <div class="d-flex justify-content-between">
-        <img src="{{ asset('uploads/avatars/') ~ app.user.avatarFilename }}" class="profile">
+    {% if not isVerified %}
+        <h2 class="mb-3 text-center">
+            Your account is not verified yet. Please check your email and verify your account.
+            <a href="{{ path('app_resend_verification_email') }}">Send verification email again.</a>
+        </h2>
+    {% endif %}
+    <div class="d-flex flex-column justify-content-center align-items-center">
+        <a href="{{ path('app_user_update', {'id':app.user.id}) }}" class="btn btn-primary mb-3">
+            Update My Profile
+        </a>
+        {% if not app.user.avatarFilename %}
+            <img src="https://avatars.dicebear.com/v2/male/:seed.svg" class="profile my-3"/>
+        {% else %}
+            <img src="{{ asset('uploads/avatars/') ~ app.user.avatarFilename }}" class="profile my-3">
+        {% endif %}
         <div class="user-information">
             <h2>Email: {{ app.user.email }}</h2>
         </div>
