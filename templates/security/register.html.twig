@@ -6,12 +6,6 @@
 
 {% block body %}
     <h1 class="text-center">Create your account</h1>
-    {% for message in app.flashes('error') %}
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    {% endfor %}
     {{ form_start(form, {'attr':{'novalidate':'novalidate'}}) }}
     {{ form_errors(form) }}
     {{ form_end(form) }}

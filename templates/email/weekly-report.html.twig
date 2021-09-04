@@ -1,0 +1,24 @@
+<!doctype html>
+{% apply inline_css(source('@styles/email.css')) %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{{ email.subject }}</title>
+</head>
+<body>
+<div class="text-center">
+    <a href="{{ url('app_home') }}">
+        <img style="width: 300px; height: 300px;" src="{{ absolute_url('build/images/email/logo.1a85e075.svg') }}" alt="">
+    </a>
+    <h1>Weekly Report to Todolo upgrades</h1>
+    <p>In this week, we add some more new features. Hope you enjoy it</p>
+    <button>
+        <a href="{{ url('app_home') }}">Access our page</a>
+    </button>
+</div>
+</body>
+</html>
+{% endapply %}

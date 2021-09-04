@@ -58,6 +58,17 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return $this->findOneBy(['email' => $email]);
     }
 
+    /**
+     * @return array
+     */
+    public function findAllSubscribedToNewsletter(): array
+    {
+        return $this->createQueryBuilder('u')
+            ->andWhere('u.subscribeToNewsletter = true')
+            ->getQuery()
+            ->getResult();
+    }
+
     // /**
     //  * @return User[] Returns an array of User objects
     //  */

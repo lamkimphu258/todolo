@@ -14,10 +14,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ORM\Table(name="`user`")
- * @UniqueEntity(
- *     fields={"email"},
- *     message="This email is already existed"
- * )
+ * @UniqueEntity(fields={"email"}, message="User is already existed")
  */
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -55,6 +52,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="datetime_immutable")
      */
     private $agreeTermsAt;
+
+    /**
+     * @ORM\Column(type="boolean", options={"default": 0})
+     */
+    private $subscribeToNewsletter = false;
 
     public function getTodos(): Collection
     {
@@ -155,9 +157,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->agreeTermsAt;
     }
 
-    public function agreeTerms(): self
+    public function setAgreeTermsAt(DateTimeImmutable $now): self
     {
-        $this->agreeTermsAt = new DateTimeImmutable();
+        $this->agreeTermsAt = $now;
+
+        return $this;
+    }
+
+    public function getSubscribeToNewsletter(): ?bool
+    {
+        return $this->subscribeToNewsletter;
+    }
+
+    public function setSubscribeToNewsletter(bool $subscribeToNewsletter): self
+    {
+        $this->subscribeToNewsletter = $subscribeToNewsletter;
 
         return $this;
     }

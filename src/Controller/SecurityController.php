@@ -6,20 +6,25 @@ use App\Entity\User;
 use App\Form\Type\UserCreateType;
 use App\Repository\UserRepository;
 use App\Security\LoginFormAuthenticator;
+use App\Service\Mailer;
+use DateTimeImmutable;
+use LogicException;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
+use Symfony\Component\Validator\Constraints\Date;
 
 class SecurityController extends AbstractController
 {
     public function __construct(
         protected UserRepository $userRepository
-    )
-    {
+    ) {
     }
 
     /**
@@ -49,12 +54,13 @@ class SecurityController extends AbstractController
         Request $request,
         UserPasswordHasherInterface $passwordHasher,
         LoginFormAuthenticator $authenticator,
-        UserAuthenticatorInterface $userAuthenticator
+        UserAuthenticatorInterface $userAuthenticator,
+        Mailer $mailer
     ): Response {
         $form = $this->createForm(UserCreateType::class);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var User $userData */
+            /** @var User $user */
             $user = $form->getData();
 
             $user->setPassword(
@@ -65,10 +71,12 @@ class SecurityController extends AbstractController
             );
 
             if ($form->get('agreeTerms')->getData()) {
-                $user->agreeTerms();
+                $user->setAgreeTermsAt(new DateTimeImmutable());
             }
 
             $this->userRepository->save($user);
+
+            $mailer->sendWelcomeMessage($user);
 
             return $userAuthenticator->authenticateUser(
                 $user,
@@ -87,7 +95,7 @@ class SecurityController extends AbstractController
      */
     public function logout()
     {
-        throw new \LogicException(
+        throw new LogicException(
             'This method can be blank - it will be intercepted by the logout key on your firewall.'
         );
     }
