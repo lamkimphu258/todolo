@@ -3,84 +3,49 @@
 namespace App\Controller\Admin;
 
 use App\Entity\User;
-use App\Form\Type\Admin\UserCreateType;
-use App\Repository\UserRepository;
-use App\Service\UploaderHelper;
-use DateTimeImmutable;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\String\Slugger\SluggerInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
-class UserController extends AbstractController
+class UserController extends AbstractCrudController
 {
-    /**
-     * @param UserRepository $userRepository
-     * @param UploaderHelper $uploaderHelper
-     */
-    public function __construct(
-        private UserRepository $userRepository,
-        private UploaderHelper $uploaderHelper
-    )
+    public static function getEntityFqcn(): string
     {
+        return User::class;
     }
 
-    /**
-     * @param Request $request
-     * @param SluggerInterface $slugger
-     * @param UserPasswordHasherInterface $passwordHasher
-     * @return RedirectResponse|Response
-     */
-    #[Route(
-        '/admin/user/create',
-        name: 'admin_user_create',
-        methods: [
-            Request::METHOD_GET,
-            Request::METHOD_POST
-        ]
-    )]
-    public function createUser(
-        Request $request,
-        SluggerInterface $slugger,
-        UserPasswordHasherInterface $passwordHasher
-    ): RedirectResponse|Response {
-        $form = $this->createForm(UserCreateType::class);
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $user = new User();
+    public function configureFields(string $pageName): iterable
+    {
+        return [
+            IdField::new('id')
+                ->setRequired(false),
+            EmailField::new('email'),
+            TextField::new('password'),
+            ArrayField::new('roles'),
+            DateTimeField::new('agreeTermsAt'),
+            DateTimeField::new('verifiedAt'),
+            BooleanField::new('subscribeToNewsletter'),
+            ImageField::new('avatarFilename')
+                ->setBasePath('uploads/avatars')
+                ->setUploadDir('public/uploads/avatars')
+                ->setRequired(false)
+                ->setUploadedFileNamePattern('[randomhash].[extension]')
+                ->setLabel('Avatar'),
+        ];
+    }
 
-            /** @var UploadedFile $avatarFile */
-            $avatarFile = $form->get('avatar')->getData();
-
-            if ($avatarFile) {
-                $newFilename = $this->uploaderHelper->uploadUserImage($avatarFile);
-
-                $user->setAvatarFilename($newFilename);
-            }
-
-            $user->setEmail($form->get('email')->getData())
-                ->setPassword(
-                    $passwordHasher->hashPassword(
-                        $user,
-                        $form->get('plainPassword')->getData()
-                    )
-                )
-                ->setAgreeTermsAt(new DateTimeImmutable())
-                ->setSubscribeToNewsletter(false);
-
-            $this->userRepository->save($user);
-
-            return $this->redirectToRoute('admin_user_create');
-        }
-
-        return $this->render(
-            'admin/user/create.html.twig',
-            ['form' => $form->createView()]
-        );
+    public function configureActions(Actions $actions): Actions
+    {
+        return $actions
+            ->remove(Crud::PAGE_INDEX, Action::NEW)
+            ->remove(Crud::PAGE_INDEX, Action::EDIT);
     }
 }

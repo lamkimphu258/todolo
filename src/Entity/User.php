@@ -44,7 +44,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @var Collection
-     * @ORM\OneToMany (targetEntity="App\Entity\Todo", mappedBy="author")
+     * @ORM\OneToMany (targetEntity="App\Entity\Todo", mappedBy="author", cascade={"remove"})
      */
     private Collection $todos;
 
@@ -208,5 +208,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->verifiedAt = $verifiedAt;
 
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->email;
     }
 }

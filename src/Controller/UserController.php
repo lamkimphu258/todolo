@@ -63,8 +63,6 @@ class UserController extends AbstractController
                 }
                 $user->setAvatarFilename($newFilename);
             }
-            $user->setEmail($userData->getEmail());
-
             $this->userRepository->save($user);
 
             return $this->redirectToRoute('app_user_get', [

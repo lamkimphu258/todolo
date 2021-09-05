@@ -22,11 +22,6 @@ class UserUpdateType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('email', TextType::class, [
-                'required' => true,
-                'constraints' => [new NotBlank(message: 'Email is required')],
-                'attr' => ['placeholder' => 'example@email.com',],
-            ])
             ->add('uploadedFile', FileType::class, [
                 'required' => false,
                 'mapped' => false,

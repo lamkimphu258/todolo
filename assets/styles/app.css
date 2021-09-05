@@ -9,3 +9,11 @@
     width: 150px;
     height: 150px;
 }
+
+div.card.user {
+    background-color: #0c4a6e;
+}
+
+div.card.todo {
+    background-color: #0d5e42;
+}

@@ -1,7 +1,38 @@
-{% extends 'base.html.twig' %}
+{% extends '@EasyAdmin/page/content.html.twig' %}
 
-{% block title %}Admin Main Dashboard{% endblock %}
+{% block page_title %}Admin Dashboard{% endblock %}
 
-{% block body %}
-    <h1 class="text-center">Main Dashboard</h1>
+{% block content_title %}Admin Main Dashboard{% endblock %}
+
+{% block main %}
+    <div class="d-flex flex-column">
+        <div class="d-flex justify-content-start">
+            <div class="card user me-5">
+                <div class="card-body">
+                    <div class="d-flex align-items-center justify-content-between text-white">
+                        <i class="fa fa-5x fa-user me-3"></i>
+                        <div class="d-flex flex-column">
+                            <h2 class="text-white">User</h2>
+                            <h2 class="text-white">{{ totalUser }}</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card todo">
+                <div class="card-body">
+                    <div class="d-flex align-items-center justify-content-between text-white">
+                        <i class="fa fa-5x fa-tasks me-3"></i>
+                        <div class="d-flex flex-column">
+                            <h2 class="text-white">Todo</h2>
+                            <h2 class="text-white">{{ totalTodo }}</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
+
+{# {% block body %} #}
+{# {{ render_chart(chart) }} #}
+{# {% endblock %} #}

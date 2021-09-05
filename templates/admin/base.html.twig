@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %} - Admin</title>
+    {% block stylesheets %}
+        {{ encore_entry_link_tags('admin') }}
+    {% endblock %}
+
+    {% block javascripts %}
+        {{ encore_entry_script_tags('admin') }}
+    {% endblock %}
+</head>
+<body class="">
+<div class="d-flex flex-column justify-content-between min-vh-100">
+    {% include 'partials/navbar.html.twig' %}
+    <div class="body container my-3">
+        {% block body %}{% endblock %}
+    </div>
+    {% include 'partials/footer.html.twig' %}
+</div>
+</body>
+</html>
